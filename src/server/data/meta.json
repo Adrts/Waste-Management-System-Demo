@@ -1,0 +1,292 @@
+{
+  "generated_at": "2026-10-11T17:12:05",
+  "range": [
+    "2024-07-01",
+    "2026-10-11"
+  ],
+  "seed": 42,
+  "rows": {
+    "transfer": 266689,
+    "storage": 79873,
+    "disposal": 152456
+  },
+  "emergency_legs": 3055,
+  "events": {
+    "cny": [
+      {
+        "name": "春节",
+        "date": "2025-01-29"
+      },
+      {
+        "name": "春节",
+        "date": "2026-02-17"
+      }
+    ],
+    "typhoons": [
+      {
+        "name": "台风“摩羯”",
+        "landfall": "2024-09-05",
+        "window_start": "2024-09-02",
+        "window_end": "2024-09-08"
+      },
+      {
+        "name": "台风“蝴蝶”",
+        "landfall": "2025-06-14",
+        "window_start": "2025-06-11",
+        "window_end": "2025-06-17"
+      },
+      {
+        "name": "台风“杨柳”",
+        "landfall": "2026-08-13",
+        "window_start": "2026-08-10",
+        "window_end": "2026-08-16"
+      }
+    ]
+  },
+  "rules": [
+    "春节前 7 天：家庭厨余/其他垃圾日清运量上浮约 +30%",
+    "台风临近 72h：全品类清运量上浮约 +50%；灾后 3 天其他垃圾 +60%、园林垃圾 ×3",
+    "周末（周六/周日）：其他/家庭厨余/可回收物 +10%",
+    "冬季（11 月-2 月）旅游旺季 +6%；年增长 +3%"
+  ],
+  "injected": {
+    "reconciliation": [
+      {
+        "transfer_no": "HK-20241011-OTHER-0143",
+        "disposal_id": "DSP-20241011-0056",
+        "date": "2024-10-11"
+      },
+      {
+        "transfer_no": "HK-20250118-OTHER-0102",
+        "disposal_id": "DSP-20250118-0040",
+        "date": "2025-01-18"
+      },
+      {
+        "transfer_no": "HK-20250426-OTHER-0164",
+        "disposal_id": "DSP-20250426-0069",
+        "date": "2025-04-26"
+      },
+      {
+        "transfer_no": "HK-20250802-KN_CANTEEN-0006",
+        "disposal_id": "DSP-20250802-0121",
+        "date": "2025-08-02"
+      },
+      {
+        "transfer_no": "HK-20251111-KN_CANTEEN-0022",
+        "disposal_id": "DSP-20251111-0144",
+        "date": "2025-11-11"
+      },
+      {
+        "transfer_no": "HK-20260213-RECY-0009",
+        "disposal_id": "DSP-20260213-0213",
+        "date": "2026-02-13"
+      },
+      {
+        "transfer_no": "HK-20260522-OTHER-0136",
+        "disposal_id": "DSP-20260528-0005",
+        "date": "2026-05-28"
+      },
+      {
+        "transfer_no": "HK-20260825-OTHER-0187",
+        "disposal_id": "DSP-20260825-0071",
+        "date": "2026-08-25"
+      }
+    ],
+    "overload": [
+      {
+        "transfer_no": "HK-20240922-FECAL-0002",
+        "weight_kg": 8271.21,
+        "load_ton": 8.0,
+        "date": "2024-09-22"
+      },
+      {
+        "transfer_no": "HK-20241215-OTHER-0166",
+        "weight_kg": 8204.04,
+        "load_ton": 8.0,
+        "date": "2024-12-15"
+      },
+      {
+        "transfer_no": "HK-20250303-KN_CANTEEN-0037",
+        "weight_kg": 8404.55,
+        "load_ton": 8.0,
+        "date": "2025-03-03"
+      },
+      {
+        "transfer_no": "HK-20250527-KN_HOME-0009",
+        "weight_kg": 8313.86,
+        "load_ton": 8.0,
+        "date": "2025-05-27"
+      },
+      {
+        "transfer_no": "HK-20250817-OTHER-0023",
+        "weight_kg": 8619.89,
+        "load_ton": 8.0,
+        "date": "2025-08-17"
+      },
+      {
+        "transfer_no": "HK-20251107-KN_CANTEEN-0035",
+        "weight_kg": 8547.55,
+        "load_ton": 8.0,
+        "date": "2025-11-07"
+      },
+      {
+        "transfer_no": "HK-20260126-OTHER-0008",
+        "weight_kg": 8208.92,
+        "load_ton": 8.0,
+        "date": "2026-01-26"
+      },
+      {
+        "transfer_no": "HK-20260413-OTHER-0030",
+        "weight_kg": 8457.04,
+        "load_ton": 8.0,
+        "date": "2026-04-13"
+      },
+      {
+        "transfer_no": "HK-20260704-OTHER-0160",
+        "weight_kg": 8171.72,
+        "load_ton": 8.0,
+        "date": "2026-07-04"
+      },
+      {
+        "transfer_no": "HK-20260920-OTHER-0212",
+        "weight_kg": 8423.64,
+        "load_ton": 8.0,
+        "date": "2026-09-20"
+      }
+    ],
+    "overnight": [
+      {
+        "date": "2024-10-14",
+        "facility": "TR-001"
+      },
+      {
+        "date": "2025-11-06",
+        "facility": "TR-001"
+      }
+    ],
+    "long_hazard": [
+      {
+        "batch_no": "HZ-02-00001",
+        "facility": "ST-HZ02",
+        "days": 832
+      },
+      {
+        "batch_no": "HZ-03-00002",
+        "facility": "ST-HZ03",
+        "days": 832
+      }
+    ],
+    "long_pit": [
+      {
+        "facility": "TM-INC01",
+        "in_time": "2024-07-01 11:56:00",
+        "days": 9
+      },
+      {
+        "facility": "TM-INC01",
+        "in_time": "2024-07-01 12:38:00",
+        "days": 9
+      }
+    ],
+    "rejects": [
+      {
+        "transfer_no": "HK-20240803-OTHER-0190",
+        "date": "2024-08-03"
+      },
+      {
+        "transfer_no": "HK-20241006-OTHER-0150",
+        "date": "2024-10-06"
+      },
+      {
+        "transfer_no": "HK-20241108-OTHER-0111",
+        "date": "2024-11-08"
+      },
+      {
+        "transfer_no": "HK-20250310-OTHER-0180",
+        "date": "2025-03-10"
+      },
+      {
+        "transfer_no": "HK-20250412-OTHER-0154",
+        "date": "2025-04-12"
+      },
+      {
+        "transfer_no": "HK-20250514-KN_CANTEEN-0012",
+        "date": "2025-05-14"
+      },
+      {
+        "transfer_no": "HK-20251220-OTHER-0181",
+        "date": "2025-12-20"
+      },
+      {
+        "transfer_no": "HK-20260119-KN_CANTEEN-0024",
+        "date": "2026-01-19"
+      },
+      {
+        "transfer_no": "HK-20260216-KN_CANTEEN-0005",
+        "date": "2026-02-16"
+      },
+      {
+        "transfer_no": "HK-20260419-OTHER-0143",
+        "date": "2026-04-19"
+      },
+      {
+        "transfer_no": "HK-20260521-OTHER-0121",
+        "date": "2026-05-21"
+      },
+      {
+        "transfer_no": "HK-20260621-KN_HOME-0050",
+        "date": "2026-06-21"
+      }
+    ],
+    "reclass": [
+      {
+        "transfer_no": "HK-20240731-OTHER-0177",
+        "date": "2024-07-31"
+      },
+      {
+        "transfer_no": "HK-20241003-OTHER-0165",
+        "date": "2024-10-03"
+      },
+      {
+        "transfer_no": "HK-20241206-OTHER-0184",
+        "date": "2024-12-06"
+      },
+      {
+        "transfer_no": "HK-20250208-OTHER-0240",
+        "date": "2025-02-08"
+      },
+      {
+        "transfer_no": "HK-20250413-OTHER-0184",
+        "date": "2025-04-13"
+      },
+      {
+        "transfer_no": "HK-20250616-OTHER-0295",
+        "date": "2025-06-16"
+      },
+      {
+        "transfer_no": "HK-20250819-OTHER-0202",
+        "date": "2025-08-19"
+      },
+      {
+        "transfer_no": "HK-20251022-OTHER-0172",
+        "date": "2025-10-22"
+      },
+      {
+        "transfer_no": "HK-20251225-OTHER-0164",
+        "date": "2025-12-25"
+      },
+      {
+        "transfer_no": "HK-20260227-OTHER-0207",
+        "date": "2026-02-27"
+      },
+      {
+        "transfer_no": "HK-20260502-OTHER-0227",
+        "date": "2026-05-02"
+      },
+      {
+        "transfer_no": "HK-20260705-OTHER-0204",
+        "date": "2026-07-05"
+      }
+    ]
+  }
+}
