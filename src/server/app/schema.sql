@@ -82,6 +82,8 @@ CREATE INDEX idx_trf_to        ON txn_transfer(to_facility_id);
 CREATE INDEX idx_trf_vehicle   ON txn_transfer(vehicle_id);
 CREATE INDEX idx_trf_loaded    ON txn_transfer(loaded_time);
 CREATE INDEX idx_trf_status    ON txn_transfer(status);
+CREATE INDEX idx_trf_veh_time  ON txn_transfer(vehicle_id, loaded_time);
+CREATE INDEX idx_stg_fac_time  ON txn_storage(facility_id, io_time);
 
 -- 5. txn_storage 暂存台账（设施级库存流水，库存=ΣIN−ΣOUT）
 CREATE TABLE txn_storage (

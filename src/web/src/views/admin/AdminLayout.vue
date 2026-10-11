@@ -13,6 +13,7 @@
         <el-menu-item index="/admin/storage"><el-icon><Box /></el-icon>暂存台账</el-menu-item>
         <el-menu-item index="/admin/disposal"><el-icon><CircleCheck /></el-icon>消耗记录</el-menu-item>
         <el-menu-item index="/admin/trace"><el-icon><Search /></el-icon>追溯查询</el-menu-item>
+        <el-menu-item index="/admin/reports"><el-icon><Histogram /></el-icon>数据汇总</el-menu-item>
         <el-menu-item index="/admin/categories"><el-icon><CollectionTag /></el-icon>垃圾类别字典</el-menu-item>
         <el-menu-item index="/admin/facilities"><el-icon><OfficeBuilding /></el-icon>设施管理</el-menu-item>
         <el-menu-item index="/admin/vehicles"><el-icon><Van /></el-icon>车辆管理</el-menu-item>

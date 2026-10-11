@@ -11,7 +11,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 from .auth import TOKENS, router as auth_router
-from .routers import ledger, master, stats, trace, transfers
+from .routers import ledger, master, reports, stats, trace, transfers
 
 app = FastAPI(title="海口市垃圾全生命周期管理系统 DEMO", version="1.0")
 
@@ -42,6 +42,7 @@ app.include_router(transfers.router)
 app.include_router(ledger.router)
 app.include_router(trace.router)
 app.include_router(stats.router)
+app.include_router(reports.router)
 
 # ---------------- 静态托管（构建后的前端） ----------------
 WEB_DIST = os.path.normpath(os.path.join(

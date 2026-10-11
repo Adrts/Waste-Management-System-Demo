@@ -12,6 +12,7 @@ const routes = [
       { path: 'storage', component: () => import('./views/admin/Storage.vue') },
       { path: 'disposal', component: () => import('./views/admin/Disposal.vue') },
       { path: 'trace', component: () => import('./views/admin/Trace.vue') },
+      { path: 'reports', component: () => import('./views/admin/Reports.vue') },
       { path: 'categories', component: () => import('./views/admin/Categories.vue') },
       { path: 'facilities', component: () => import('./views/admin/Facilities.vue') },
       { path: 'vehicles', component: () => import('./views/admin/Vehicles.vue') },
