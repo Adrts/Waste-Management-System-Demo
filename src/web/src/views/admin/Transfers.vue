@@ -160,9 +160,6 @@
             <el-option label="危废处置 HAZARD_TREAT" value="HAZARD_TREAT" />
           </el-select>
         </el-form-item>
-        <el-form-item label="资源化产出">
-          <el-input v-model="outputsText" type="textarea" :rows="3" placeholder='JSON，如 {"电力_kwh": 1200, "炉渣砖_t": 1.2}' />
-        </el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="confirmVisible = false">取消</el-button>
@@ -200,7 +197,6 @@ const confirmVisible = ref(false); const editVisible = ref(false)
 const currentRow = ref(null)
 const form = reactive({ category_code: '', vehicle_id: '', from_facility_id: '', to_facility_id: '', weight_kg: 1000, leg_seq: 1, batch_no: '', reclass_from: '', loaded_time: '', emergency_flag: false })
 const confirmForm = reactive({ weight_kg: 0, disposal_method: '' })
-const outputsText = ref('{}')
 const editForm = reactive({ weight_kg: 0, batch_no: '', emergency_flag: false })
 
 const eligibleVehicles = computed(() =>
@@ -256,7 +252,6 @@ function openConfirm(row) {
   currentRow.value = row
   confirmForm.weight_kg = row.weight_kg
   confirmForm.disposal_method = defaultMethod(row.category_code)
-  outputsText.value = JSON.stringify(defaultOutputs(row.category_code, row.weight_kg), null, 1)
   confirmVisible.value = true
 }
 
@@ -265,23 +260,12 @@ function defaultMethod(cat) {
     FECAL: 'ANAEROBIC', HAZARD: 'HAZARD_TREAT', BULK: 'DISASSEMBLE', RECY: 'RECYCLE',
     CONSTR: 'RECYCLE', GARDEN: 'COMPOST' }[cat] || 'INCINERATION'
 }
-function defaultOutputs(cat, w) {
-  return { OTHER: { 电力_kwh: Math.round(w * 0.44) }, WATER: { 电力_kwh: Math.round(w * 0.44) },
-    KN_HOME: { 沼气_m3: Math.round(w * 62), 有机肥_t: +(w * 0.18 / 1000).toFixed(2) },
-    KN_CANTEEN: { 沼气_m3: Math.round(w * 68), 生物柴油_t: +(w * 0.03 / 1000).toFixed(3) },
-    FECAL: { 沼气_m3: Math.round(w * 30) }, HAZARD: { 危废安全处置_t: +(w / 1000).toFixed(3) },
-    BULK: { 可回用金属_t: +(w * 0.00008).toFixed(3), 残渣_t: +(w * 0.00055).toFixed(3) },
-    RECY: { 再生原料_t: +(w * 0.88 / 1000).toFixed(3) },
-    CONSTR: { 再生骨料_m3: +(w * 0.00056).toFixed(2) }, GARDEN: { 有机肥_t: +(w * 0.25 / 1000).toFixed(3) } }[cat] || {}
-}
 
 async function saveConfirm() {
   saving.value = true
   try {
-    let outputs = null
-    try { outputs = JSON.parse(outputsText.value || 'null') } catch { throw new Error('资源化产出不是合法 JSON') }
     const res = await http.post(`/transfers/${currentRow.value.transfer_no}/confirm`,
-      { weight_kg: confirmForm.weight_kg, disposal_method: confirmForm.disposal_method, outputs })
+      { weight_kg: confirmForm.weight_kg, disposal_method: confirmForm.disposal_method })
     ElMessage.success(res.message)
     for (const w of res.data?.warnings || []) ElMessage.warning(w)
     confirmVisible.value = false; load()
@@ -291,8 +275,7 @@ async function saveConfirm() {
 async function confirmNonTerminal(row) {
   await http.post(`/transfers/${row.transfer_no}/arrive`, {}).catch(() => {})
   await http.post(`/transfers/${row.transfer_no}/confirm`, {
-    weight_kg: row.weight_kg, disposal_method: 'INCINERATION',
-    outputs: { 备注: '中转/暂存节点过站确认，非末端消耗' }
+    weight_kg: row.weight_kg, disposal_method: 'INCINERATION'
   }).catch(e => ElMessage.error(e.message))
   ElMessage.success('已确认'); load()
 }
@@ -339,9 +322,5 @@ onMounted(() => { loadRefs(); load() })
 </script>
 
 <style scoped>
-.page-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.page-head h2 { font-size: 18px; color: #1f2d3d; }
-.filter-card { margin-bottom: 12px; }
-.filter-card :deep(.el-form-item) { margin-bottom: 0; }
 .form-tip { font-size: 11px; color: #909399; line-height: 1.5; }
 </style>

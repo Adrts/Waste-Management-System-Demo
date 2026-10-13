@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-10-11T17:12:05",
+  "generated_at": "2026-10-13T14:24:52",
   "range": [
     "2024-07-01",
-    "2026-10-11"
+    "2026-10-13"
   ],
   "seed": 42,
   "rows": {
-    "transfer": 266689,
-    "storage": 79873,
-    "disposal": 152456
+    "transfer": 267313,
+    "storage": 80041,
+    "disposal": 152832
   },
   "emergency_legs": 3055,
   "events": {
@@ -168,12 +168,12 @@
       {
         "batch_no": "HZ-02-00001",
         "facility": "ST-HZ02",
-        "days": 832
+        "days": 834
       },
       {
         "batch_no": "HZ-03-00002",
         "facility": "ST-HZ03",
-        "days": 832
+        "days": 834
       }
     ],
     "long_pit": [

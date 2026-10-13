@@ -167,9 +167,5 @@ onMounted(() => { loadRefs(); load(); loadStock() })
 </script>
 
 <style scoped>
-.page-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.page-head h2 { font-size: 18px; color: #1f2d3d; }
-.filter-card { margin-bottom: 12px; }
-.filter-card :deep(.el-form-item) { margin-bottom: 0; }
 .form-tip { font-size: 11px; color: #909399; }
 </style>

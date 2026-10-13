@@ -2,7 +2,7 @@
   <div>
     <div class="page-head">
       <h2>车辆管理（常规编制 + 临时借调，专车专类）</h2>
-      <div>
+      <div class="head-actions">
         <el-button type="warning" @click="openCreate('TEMP')"><el-icon><Plus /></el-icon>借调车辆即借即登</el-button>
         <el-button type="primary" @click="openCreate('REGULAR')"><el-icon><Plus /></el-icon>新增常规车辆</el-button>
       </div>
@@ -178,9 +178,6 @@ onMounted(() => { loadRefs(); load() })
 </script>
 
 <style scoped>
-.page-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.page-head h2 { font-size: 18px; color: #1f2d3d; }
-.filter-card { margin-bottom: 12px; }
-.filter-card :deep(.el-form-item) { margin-bottom: 0; }
+.head-actions { display: flex; flex-wrap: wrap; row-gap: 8px; }
 .tip { font-size: 11px; color: #909399; }
 </style>

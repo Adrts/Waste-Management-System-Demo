@@ -23,8 +23,6 @@
 </template>
 
 <style scoped>
-.page-head { margin-bottom: 12px; }
-.page-head h2 { font-size: 18px; color: #1f2d3d; }
 .plan { text-align: left; max-width: 620px; }
 .plan h4 { margin-bottom: 8px; }
 .plan li { margin: 6px 0; color: #606266; font-size: 13px; }

@@ -189,7 +189,7 @@ def add_leg(d, cat, frm, to, veh, weight, loaded, arrived, *,
     return no, status, w
 
 
-def add_disposal(d, fac, no, cat, weight, method, outputs, consume,
+def add_disposal(d, fac, no, cat, weight, method, consume,
                  batch=None, reject=None):
     """消耗记录；非拒收行按抽样注入勾稽异常（实收重量 -28%）。"""
     _dsp_idx[0] += 1
@@ -198,7 +198,6 @@ def add_disposal(d, fac, no, cat, weight, method, outputs, consume,
         weight *= 0.72
     did = next_dsp(consume.date())
     dsp.append((did, fac, no, batch, cat, round(weight, 2), method,
-                json.dumps(outputs, ensure_ascii=False) if outputs else None,
                 S(consume), reject))
     if anomalous:
         injected["reconciliation"].append(
@@ -310,7 +309,7 @@ def _hub_out(d, hub, total, next_morning=False):
 def _finish_incin(d, no, batch, cat, wt, arrived):
     """终到焚烧厂：35% 走贮坑工艺暂存后消耗。"""
     if no in REJECT_SET:
-        add_disposal(d, "TM-INC01", no, cat, 0, None, None, arrived,
+        add_disposal(d, "TM-INC01", no, cat, 0, None, arrived,
                      batch=batch, reject="分类不合格，含杂质超标，拒收退回")
         return
     if R.random() < 0.35:
@@ -318,8 +317,7 @@ def _finish_incin(d, no, batch, cat, wt, arrived):
     else:
         consume = arrived + timedelta(minutes=R.randint(30, 120))
     add_disposal(consume.date(), "TM-INC01", no, cat, wt, "INCINERATION",
-                 {"电力_kwh": round(wt * 0.44), "炉渣砖_t": round(wt * 0.02, 2),
-                  "飞灰固化_t": round(wt * 0.003, 3)}, consume, batch=batch)
+                 consume, batch=batch)
 
 
 def gen_kitchen(d, cat, tonnage, terminal):
@@ -337,16 +335,13 @@ def gen_kitchen(d, cat, tonnage, terminal):
         if not no:
             continue
         if no in REJECT_SET:
-            add_disposal(d, terminal, no, cat, 0, None, None, t1,
+            add_disposal(d, terminal, no, cat, 0, None, t1,
                          reject="厨余杂质率超 20%，拒收退回")
             continue
         if st != "CONFIRMED":
             continue
         consume = t1 + timedelta(minutes=R.randint(40, 150))
-        outputs = ({"沼气_m3": round(w * 68), "生物柴油_t": round(w * 0.03, 3),
-                    "有机肥_t": round(w * 0.15, 2)} if cat == "KN_CANTEEN"
-                   else {"沼气_m3": round(w * 62), "有机肥_t": round(w * 0.18, 2)})
-        add_disposal(consume.date(), terminal, no, cat, w, "ANAEROBIC", outputs,
+        add_disposal(consume.date(), terminal, no, cat, w, "ANAEROBIC",
                      consume)
 
 
@@ -398,9 +393,7 @@ def ship_hazard(d):
             if st == "CONFIRMED":
                 consume = t1 + timedelta(hours=R.randint(2, 6))
                 add_disposal(consume.date(), "TM-HZ01", no, "HAZARD", w,
-                             "HAZARD_TREAT",
-                             {"危废安全处置_t": round(w / 1000, 3), "转运联单": no},
-                             consume, batch=b["batch"])
+                             "HAZARD_TREAT", consume, batch=b["batch"])
                 batches.remove(b)
                 if (d - b["in_date"]).days > 365:
                     injected["long_hazard"].append({"batch_no": b["batch"],
@@ -448,8 +441,7 @@ def ship_recy(d):
             if st == "CONFIRMED":
                 consume = t1 + timedelta(hours=R.randint(1, 4))
                 add_disposal(consume.date(), "TM-RC01", no, "RECY", w, "RECYCLE",
-                             {"再生原料_t": round(w * 0.88 / 1000, 3),
-                              "市场交易线": "不经环卫考核"}, consume)
+                             consume)
                 for x in chunk:
                     items.remove(x)
 
@@ -494,7 +486,6 @@ def ship_constr(d):
             if st == "CONFIRMED":
                 consume = t1 + timedelta(hours=R.randint(2, 8))
                 add_disposal(consume.date(), "TM-CZ01", no, "CONSTR", w, "RECYCLE",
-                             {"再生骨料_m3": round(m3 * 0.8, 2), "再生建材_利用率": 0.832},
                              consume)
                 for x in chunk:
                     items.remove(x)
@@ -514,9 +505,7 @@ def gen_bulk(d, tonnage):
         batch = f"BJ-{no}"
         consume = t1 + timedelta(hours=R.randint(2, 8))
         add_disposal(consume.date(), "TM-BULK01", no, "BULK", w, "DISASSEMBLE",
-                     {"可回用金属_t": round(w * 0.00008, 3),
-                      "木材_t": round(w * 0.0001, 3),
-                      "残渣_t": round(w * 0.00055, 3)}, consume, batch=batch)
+                     consume, batch=batch)
         rd = d + timedelta(days=1)                              # 残渣续段（同批次）
         if rd > TODAY:
             continue
@@ -530,7 +519,7 @@ def gen_bulk(d, tonnage):
             rcon = (add_pit(rd, "TM-INC01", rno, "BULK", rw, rt1)
                     if R.random() < 0.3 else rt1 + timedelta(minutes=R.randint(30, 90)))
             add_disposal(rcon.date(), "TM-INC01", rno, "BULK", rw, "INCINERATION",
-                         {"电力_kwh": round(rw * 0.44)}, rcon, batch=batch)
+                         rcon, batch=batch)
 
 
 def gen_garden(d, tonnage):
@@ -547,11 +536,9 @@ def gen_garden(d, tonnage):
         if no and st == "CONFIRMED":
             consume = t1 + timedelta(hours=R.randint(2, 10))
             if to == "TM-CMP01":
-                add_disposal(consume.date(), to, no, "GARDEN", w, "COMPOST",
-                             {"有机肥_t": round(w * 0.25, 3)}, consume)
+                add_disposal(consume.date(), to, no, "GARDEN", w, "COMPOST", consume)
             else:
-                add_disposal(consume.date(), to, no, "GARDEN", w, "INCINERATION",
-                             {"电力_kwh": round(w * 0.44)}, consume)
+                add_disposal(consume.date(), to, no, "GARDEN", w, "INCINERATION", consume)
 
 
 def gen_fecal_water(d):
@@ -564,8 +551,7 @@ def gen_fecal_water(d):
         no, st, w = add_leg(d, "FECAL", frm, "TM-FC01", veh, wt, t0, t1)
         if no and st == "CONFIRMED":
             consume = t1 + timedelta(hours=R.randint(1, 4))
-            add_disposal(consume.date(), "TM-FC01", no, "FECAL", w, "ANAEROBIC",
-                         {"沼气_m3": round(w * 30)}, consume)
+            add_disposal(consume.date(), "TM-FC01", no, "FECAL", w, "ANAEROBIC", consume)
     for _ in range(2):
         frm = R.choice(["SOURCE-MT01", "SOURCE-MT02"])
         wt = w_jitter(1500)
@@ -575,8 +561,7 @@ def gen_fecal_water(d):
         no, st, w = add_leg(d, "WATER", frm, "TM-INC01", veh, wt, t0, t1)
         if no and st == "CONFIRMED":
             consume = t1 + timedelta(hours=R.randint(1, 3))
-            add_disposal(consume.date(), "TM-INC01", no, "WATER", w, "INCINERATION",
-                         {"电力_kwh": round(w * 0.44)}, consume)
+            add_disposal(consume.date(), "TM-INC01", no, "WATER", w, "INCINERATION", consume)
 
 
 def gen_reclass(d):
@@ -592,7 +577,6 @@ def gen_reclass(d):
         injected["reclass"].append({"transfer_no": no, "date": d.isoformat()})
         consume = t1 + timedelta(minutes=R.randint(30, 90))
         add_disposal(consume.date(), "TM-INC01", no, "OTHER", w, "INCINERATION",
-                     {"电力_kwh": round(w * 0.44), "备注": "拍照留底后按其他垃圾焚烧"},
                      consume)
 
 
@@ -661,7 +645,7 @@ def _flush(conn):
         conn.executemany("INSERT INTO txn_storage VALUES (?,?,?,?,?,?,?,?,?,?)", stg)
         stg.clear()
     if dsp:
-        conn.executemany("INSERT INTO txn_disposal VALUES (?,?,?,?,?,?,?,?,?,?)", dsp)
+        conn.executemany("INSERT INTO txn_disposal VALUES (?,?,?,?,?,?,?,?,?)", dsp)
         dsp.clear()
     conn.commit()
     return n

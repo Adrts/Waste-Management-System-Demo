@@ -173,11 +173,13 @@ def utilization(start: str = "", end: str = "", db=Depends(get_db)):
     end = end or date.today().isoformat()
     start = start or (date.fromisoformat(end) - timedelta(days=7)).isoformat()
     rows = db.execute(
-        """SELECT category_code, enrollment_type,
-                  SUM(trips) AS trips, SUM(loaded_kg) AS loaded_kg, SUM(capacity_kg) AS capacity_kg,
-                  ROUND(SUM(loaded_kg)/SUM(capacity_kg),4) AS utilization
-           FROM v_vehicle_utilization WHERE stat_date BETWEEN ? AND ?
-           GROUP BY category_code, enrollment_type ORDER BY loaded_kg DESC""",
+        """SELECT v.category_code, c.category_name, v.enrollment_type,
+                  SUM(v.trips) AS trips, SUM(v.loaded_kg) AS loaded_kg, SUM(v.capacity_kg) AS capacity_kg,
+                  ROUND(SUM(v.loaded_kg)/SUM(v.capacity_kg),4) AS utilization
+           FROM v_vehicle_utilization v
+           JOIN dict_waste_category c ON c.category_code=v.category_code
+           WHERE v.stat_date BETWEEN ? AND ?
+           GROUP BY v.category_code, c.category_name, v.enrollment_type ORDER BY loaded_kg DESC""",
         (start, end)).fetchall()
     return {"code": 0, "data": [dict(r) for r in rows]}
 

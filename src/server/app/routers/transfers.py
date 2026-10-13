@@ -1,5 +1,4 @@
 """流转单：列表 / 建单四道校验 / 状态机（在途→到达→签收）/ 拒收回退 / 异常登记。"""
-import json
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -192,7 +191,6 @@ def arrive(no: str, body: ArriveBody | None = None, db=Depends(get_db)):
 class ConfirmBody(BaseModel):
     weight_kg: float
     disposal_method: str
-    outputs: dict | None = None
     consume_time: str | None = None
 
 
@@ -233,21 +231,18 @@ def confirm(no: str, body: ConfirmBody, db=Depends(get_db)):
     if existing:                     # 拒收回退后的再次签收：更新原消耗行
         db.execute(
             "UPDATE txn_disposal SET facility_id=?, batch_no=?, category_code=?, weight_kg=?, "
-            "disposal_method=?, outputs=?, consume_time=?, reject_reason=NULL WHERE disposal_id=?",
+            "disposal_method=?, consume_time=?, reject_reason=NULL WHERE disposal_id=?",
             (t["to_facility_id"], t["batch_no"], t["category_code"], body.weight_kg,
-             body.disposal_method, json.dumps(body.outputs, ensure_ascii=False)
-             if body.outputs else None, consume, existing["disposal_id"]))
+             body.disposal_method, consume, existing["disposal_id"]))
         did = existing["disposal_id"]
     else:
         did = _next_disposal_id(db, consume)
         db.execute(
             "INSERT INTO txn_disposal (disposal_id,facility_id,transfer_no,batch_no,"
-            "category_code,weight_kg,disposal_method,outputs,consume_time,reject_reason) "
-            "VALUES (?,?,?,?,?,?,?,?,?,NULL)",
+            "category_code,weight_kg,disposal_method,consume_time,reject_reason) "
+            "VALUES (?,?,?,?,?,?,?,?,NULL)",
             (did, t["to_facility_id"], no, t["batch_no"], t["category_code"],
-             body.weight_kg, body.disposal_method,
-             json.dumps(body.outputs, ensure_ascii=False)
-             if body.outputs else None, consume))
+             body.weight_kg, body.disposal_method, consume))
     db.execute("UPDATE txn_transfer SET status='CONFIRMED' WHERE transfer_no=?", (no,))
     db.commit()
     _stats.invalidate_alerts_cache()
@@ -282,15 +277,15 @@ def reject(no: str, body: RejectBody, db=Depends(get_db)):
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     existing = db.execute("SELECT * FROM txn_disposal WHERE transfer_no=?", (no,)).fetchone()
     if existing:
-        db.execute("UPDATE txn_disposal SET weight_kg=0, disposal_method=NULL, outputs=NULL, "
+        db.execute("UPDATE txn_disposal SET weight_kg=0, disposal_method=NULL, "
                    "consume_time=?, reject_reason=? WHERE disposal_id=?",
                    (now, body.reason, existing["disposal_id"]))
     else:
         did = _next_disposal_id(db, now)
         db.execute(
             "INSERT INTO txn_disposal (disposal_id,facility_id,transfer_no,batch_no,"
-            "category_code,weight_kg,disposal_method,outputs,consume_time,reject_reason) "
-            "VALUES (?,?,?,?,?,?,NULL,NULL,?,?)",
+            "category_code,weight_kg,disposal_method,consume_time,reject_reason) "
+            "VALUES (?,?,?,?,?,?,NULL,?,?)",
             (did, t["to_facility_id"], no, t["batch_no"], t["category_code"], 0,
              now, body.reason))
     db.execute("UPDATE txn_transfer SET status='LOADED' WHERE transfer_no=?", (no,))

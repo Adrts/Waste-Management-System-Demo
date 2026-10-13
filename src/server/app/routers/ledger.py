@@ -1,5 +1,4 @@
 """暂存台账（出入库登记）与消耗记录。"""
-import json
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -189,7 +188,6 @@ def list_disposal(facility: str = "", category: str = "", method: str = "",
 class DisposalBody(BaseModel):
     weight_kg: float | None = None
     disposal_method: str | None = None
-    outputs: dict | None = None
     consume_time: str | None = None
 
 
@@ -204,9 +202,6 @@ def update_disposal(did: str, body: DisposalBody, db=Depends(get_db)):
         if val is not None:
             sets.append(f"{col}=?")
             args.append(val)
-    if body.outputs is not None:
-        sets.append("outputs=?")
-        args.append(json.dumps(body.outputs, ensure_ascii=False))
     if not sets:
         raise HTTPException(400, "无可修改字段")
     args.append(did)

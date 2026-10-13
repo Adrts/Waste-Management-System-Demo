@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="page-head"><h2>消耗记录（末端实收 + 资源化产出）</h2></div>
+    <div class="page-head"><h2>消耗记录（末端实收）</h2></div>
     <el-card shadow="never" class="filter-card">
       <el-form inline>
         <el-form-item label="关键字">
@@ -31,10 +31,9 @@
         <el-table-column label="消耗方式" width="140">
           <template #default="{ row }">{{ methods[row.disposal_method] || '—' }}</template>
         </el-table-column>
-        <el-table-column label="资源化产出" min-width="220">
+        <el-table-column label="备注" min-width="220">
           <template #default="{ row }">
             <el-tag v-if="row.reject_reason" type="danger" size="small">拒收：{{ row.reject_reason }}</el-tag>
-            <span v-else-if="row.outputs" class="outputs">{{ formatOutputs(row.outputs) }}</span>
             <span v-else>—</span>
           </template>
         </el-table-column>
@@ -57,7 +56,6 @@
             <el-option v-for="(label, m) in methods" :key="m" :label="label" :value="m" />
           </el-select>
         </el-form-item>
-        <el-form-item label="资源化产出"><el-input v-model="outputsText" type="textarea" :rows="4" /></el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="visible = false">取消</el-button>
@@ -81,7 +79,6 @@ const filters = reactive({ keyword: '', category: '', method: '' })
 const visible = ref(false)
 const current = ref(null)
 const form = reactive({ weight_kg: 0, disposal_method: '' })
-const outputsText = ref('{}')
 
 async function loadRefs() { categories.value = (await http.get('/categories')).data }
 
@@ -93,25 +90,17 @@ async function load() {
   } finally { loading.value = false }
 }
 
-function formatOutputs(o) {
-  if (typeof o === 'string') { try { o = JSON.parse(o) } catch { return o } }
-  return Object.entries(o || {}).map(([k, v]) => `${k}:${v}`).join(' · ')
-}
-
 function edit(row) {
   current.value = row
   form.weight_kg = row.weight_kg; form.disposal_method = row.disposal_method
-  outputsText.value = typeof row.outputs === 'string' ? row.outputs : JSON.stringify(row.outputs || {}, null, 1)
   visible.value = true
 }
 
 async function save() {
   saving.value = true
   try {
-    let outputs = null
-    try { outputs = JSON.parse(outputsText.value || 'null') } catch { throw new Error('资源化产出不是合法 JSON') }
     const res = await http.put(`/disposal/${current.value.disposal_id}`,
-      { weight_kg: form.weight_kg, disposal_method: form.disposal_method, outputs })
+      { weight_kg: form.weight_kg, disposal_method: form.disposal_method })
     ElMessage.success(res.message); visible.value = false; load()
   } catch (e) { ElMessage.error(e.message) } finally { saving.value = false }
 }
@@ -122,9 +111,4 @@ onMounted(() => { loadRefs(); load() })
 </script>
 
 <style scoped>
-.page-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-.page-head h2 { font-size: 18px; color: #1f2d3d; }
-.filter-card { margin-bottom: 12px; }
-.filter-card :deep(.el-form-item) { margin-bottom: 0; }
-.outputs { font-size: 12px; color: #67c23a; }
 </style>

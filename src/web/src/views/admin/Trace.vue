@@ -130,10 +130,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.page-head { margin-bottom: 12px; }
-.page-head h2 { font-size: 18px; color: #1f2d3d; }
-.filter-card { margin-bottom: 12px; }
-.filter-card :deep(.el-form-item) { margin-bottom: 0; }
 .tl-detail { font-size: 12px; color: #606266; }
 h4 { margin: 6px 0 8px; color: #303133; }
 </style>

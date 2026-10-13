@@ -83,7 +83,6 @@ CREATE INDEX idx_trf_vehicle   ON txn_transfer(vehicle_id);
 CREATE INDEX idx_trf_loaded    ON txn_transfer(loaded_time);
 CREATE INDEX idx_trf_status    ON txn_transfer(status);
 CREATE INDEX idx_trf_veh_time  ON txn_transfer(vehicle_id, loaded_time);
-CREATE INDEX idx_stg_fac_time  ON txn_storage(facility_id, io_time);
 
 -- 5. txn_storage 暂存台账（设施级库存流水，库存=ΣIN−ΣOUT）
 CREATE TABLE txn_storage (
@@ -100,11 +99,12 @@ CREATE TABLE txn_storage (
     related_transfer_no TEXT REFERENCES txn_transfer(transfer_no)
 );
 CREATE INDEX idx_stg_fac_cat ON txn_storage(facility_id, category_code);
+CREATE INDEX idx_stg_fac_time ON txn_storage(facility_id, io_time);
 CREATE INDEX idx_stg_batch   ON txn_storage(batch_no);
 CREATE INDEX idx_stg_time    ON txn_storage(io_time);
 CREATE INDEX idx_stg_related ON txn_storage(related_transfer_no);
 
--- 6. txn_disposal 消耗记录（末端实收 + 资源化产出）
+-- 6. txn_disposal 消耗记录（末端实收与消耗方式）
 CREATE TABLE txn_disposal (
     disposal_id     TEXT PRIMARY KEY,
     facility_id     TEXT NOT NULL REFERENCES dim_facility(facility_id),  -- 须 type=TERMINAL
@@ -115,7 +115,6 @@ CREATE TABLE txn_disposal (
     disposal_method TEXT
                     CHECK (disposal_method IN
                     ('INCINERATION','ANAEROBIC','COMPOST','DISASSEMBLE','RECYCLE','HAZARD_TREAT')),
-    outputs         TEXT,                                         -- 资源化产出 JSON
     consume_time    TEXT,                                         -- 消耗完成时间
     reject_reason   TEXT                                          -- 拒收原因（拒收则状态回退）
 );
